@@ -1,2 +1,4 @@
-host=localhost
+host=<user>.cloudant.com
 port=5984
+user=<user>
+password=<password>

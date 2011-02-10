@@ -23,6 +23,7 @@ import static com.fourspaces.couchdb.util.JSONUtils.urlEncodePath;
 import net.sf.json.*;
 
 import net.sf.json.util.JSONStringer;
+import net.sf.json.JSONException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -39,7 +40,7 @@ public class Database {
   Log log = LogFactory.getLog(Database.class);
   private final String name;
   private int documentCount;
-  private int updateSeq;
+  private String updateSeqString;
 
   private Session session;
 
@@ -56,8 +57,11 @@ public class Database {
   Database(JSONObject json, Session session) {
     name = json.getString("db_name");
     documentCount = json.getInt("doc_count");
-    updateSeq = json.getInt("update_seq");
-
+	try {
+	    updateSeqString = String.valueOf(json.getInt("update_seq"));
+	} catch (JSONException e) {
+		updateSeqString = json.getString("update_seq");
+	} 	
     this.session = session;
   }
 
@@ -82,13 +86,23 @@ public class Database {
   }
 
   /**
-   * The update seq from the initial database load.  The update sequence is the 'revision id' of an entire database. Useful for getting all documents in a database since a certain revision
+   * The update seq from the initial database load.  The update sequence is the 'revision id' of an entire database. Useful for getting all documents in a database since a certain revision. In standard CouchDB the update_seq is an integer
    *
    * @return
    * @see getAllDocuments()
    */
   public int getUpdateSeq() {
-    return updateSeq;
+      return new Integer(updateSeqString);
+  }
+
+  /**
+   * The update seq from the initial database load.  The update sequence is the 'revision id' of an entire database. Useful for getting all documents in a database since a certain revision. In bigcouch, the update_seq is a string.
+   *
+   * @return
+   * @see getAllDocuments()
+   */
+  public String getUpdateSeqAsString() {
+    return updateSeqString;
   }
 
   /**

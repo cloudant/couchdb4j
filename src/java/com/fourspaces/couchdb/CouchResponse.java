@@ -189,4 +189,8 @@ public class CouchResponse {
         public String getBody() {
             return body;
         }
+
+	public int getStatusCode() {
+		return statusCode;
+	}
 }

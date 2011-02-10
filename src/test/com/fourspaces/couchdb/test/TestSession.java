@@ -14,8 +14,13 @@ public class TestSession {
 		try {
 			InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("couchdb-test.properties");
 			props.load(is);
-			return new Session(props.getProperty("host"),Integer.parseInt(props.getProperty("port")));
+			if (props.getProperty("user") != null && props.getProperty("password") != null) {
+				return new Session(props.getProperty("host"),Integer.parseInt(props.getProperty("port")),props.getProperty("user"),props.getProperty("password"));
+			} else {
+				return new Session(props.getProperty("host"),Integer.parseInt(props.getProperty("port")));
+}
 		} catch (Exception e) {
+			System.out.println("Cannot find properties file");
 			return new Session("localhost",5984);
 			//throw new RuntimeException(e);
 		}		
